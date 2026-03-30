@@ -45,7 +45,7 @@ body {
     margin-bottom: 15px;
 }
 
-/* Tugmalar dizayni */
+/* Tugmalar dizayni - Hammasi bir xil ko'k rangga o'tkazildi */
 .btn,
 .button,
 .btn-menu,
@@ -54,7 +54,8 @@ body {
     padding: 12px;
     border: none;
     border-radius: 12px;
-    background: #2d3436;
+    background: #0984e3;
+    /* Ko'k rang */
     color: white;
     font-weight: bold;
     cursor: pointer;
@@ -62,14 +63,12 @@ body {
     transition: 0.3s;
 }
 
-.button {
-    background: #0984e3;
-}
-
-/* Istemol uchun ko'k rang */
 .btn:hover,
-.button:hover {
-    opacity: 0.8;
+.button:hover,
+.btn-menu:hover,
+.btn-joy:hover {
+    background-color: #0773c5;
+    transform: scale(1.02);
 }
 
 /* ===== MENU SELECTION ===== */
@@ -118,16 +117,22 @@ body {
 }
 
 .card button {
-    background: #ff7675;
+    background: #0984e3;
+    /* Ko'k rang */
     color: white;
     border: none;
     padding: 10px 20px;
     border-radius: 8px;
     cursor: pointer;
     width: 100%;
+    transition: 0.3s;
 }
 
-/* ===== SAVAT MODALI (YANGI) ===== */
+.card button:hover {
+    background-color: #0773c5;
+}
+
+/* ===== SAVAT MODALI ===== */
 .cart-modal {
     position: fixed;
     top: 0;
@@ -161,7 +166,6 @@ body {
     overflow-y: auto;
 }
 
-/* Savat ichidagi har bir mahsulot */
 .cart-item {
     display: flex;
     align-items: center;
@@ -169,17 +173,6 @@ body {
     margin-bottom: 15px;
     padding-bottom: 10px;
     border-bottom: 1px solid #f9f9f9;
-}
-
-.cart-item img {
-    width: 60px;
-    height: 60px;
-    border-radius: 8px;
-    object-fit: cover;
-}
-
-.cart-info {
-    flex: 1;
 }
 
 /* ===== MODALLAR (STOL VA BUYURTMA) ===== */
@@ -205,17 +198,6 @@ body {
     position: relative;
     width: 350px;
     text-align: center;
-}
-
-.close-x {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    background: none;
-    border: none;
-    font-size: 20px;
-    color: red;
-    cursor: pointer;
 }
 
 .tables-grid {
@@ -262,6 +244,7 @@ body {
     padding: 8px 15px;
     border-radius: 8px;
     cursor: pointer;
+    z-index: 100;
 }
 
 .cart-icon {
@@ -290,7 +273,6 @@ body {
     border-radius: 50%;
 }
 
-/* Buyurtma formasi inputlari */
 .order-content input,
 .order-content textarea {
     width: 100%;
@@ -299,7 +281,6 @@ body {
     border-radius: 8px;
     border: 1px solid #ddd;
 }
-
 
 .shirinlik-bulimi,
 .ichimlik-bulimi,

@@ -11,8 +11,9 @@ document.addEventListener("DOMContentLoaded", function () {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
     let selectedTable = null;
 
-    // 2. NAVIGATSIYA (Tugmalar dizayni va ishlashi)
+    // 2. NAVIGATSIYA
     btnSaboy.onclick = () => {
+        selectedTable = null;
         loginlar.style.display = "none";
         mainContent.style.display = "block";
         cartBtn.style.display = "flex";
@@ -31,25 +32,22 @@ document.addEventListener("DOMContentLoaded", function () {
         cartBtn.style.display = "flex";
     };
 
-    // Orqaga qaytishni to'g'ri ishlashi
     backBtn.onclick = () => {
         location.reload();
     };
 
-    // 3. SAVAT MANTIQI (RASM BILAN!)
+    // 3. SAVAT MANTIQI
     window.addToCart = function (name, price, img) {
-        // MUHIM: img argumenti HTMLdan kelishi shart!
         let found = cart.find(item => item.name === name);
         if (found) {
             found.qty++;
         } else {
-            // Rasmni obyekt ichiga saqlaymiz
             cart.push({ name, price, img, qty: 1 });
         }
         updateCart();
     };
 
-    function updateCart() {
+    window.updateCart = function () {
         const cartItems = document.getElementById("cartItems");
         const cartCount = document.getElementById("cartCount");
         const totalPrice = document.getElementById("totalPrice");
@@ -62,19 +60,19 @@ document.addEventListener("DOMContentLoaded", function () {
             total += item.price * item.qty;
             count += item.qty;
 
-            // SAVATDI RASM VA DIZAYN (Mana shu joyi o'zgardi)
+            // Savat ichidagi elementlar dizayni (Tugmalar ko'k rangga moslandi)
             cartItems.innerHTML += `
-                <div class="cart-item" style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; border-bottom: 1px solid #ddd; padding-bottom: 5px;">
-                    <img src="${item.img}" style="width: 50px; height: 50px; border-radius: 5px; object-fit: cover;">
+                <div class="cart-item" style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+                    <img src="${item.img}" style="width: 55px; height: 55px; border-radius: 8px; object-fit: cover;">
                     <div style="flex: 1;">
-                        <p style="font-size: 14px; font-weight: bold; margin: 0;">${item.name}</p>
-                        <p style="font-size: 12px; margin: 0;">${item.price.toLocaleString()} so'm</p>
+                        <p style="font-size: 14px; font-weight: 600; margin: 0; color: #2d3436;">${item.name}</p>
+                        <p style="font-size: 13px; margin: 0; color: #0984e3;">${item.price.toLocaleString()} so'm</p>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 5px;">
-                        <button onclick="changeQty(${i}, -1)" style="width: 25px; height: 25px; cursor: pointer;">-</button>
-                        <span>${item.qty}</span>
-                        <button onclick="changeQty(${i}, 1)" style="width: 25px; height: 25px; cursor: pointer;">+</button>
-                        <button onclick="deleteItem(${i})" style="color: red; border: none; background: none; cursor: pointer; font-size: 18px;">🗑️</button>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <button onclick="changeQty(${i}, -1)" style="width: 28px; height: 28px; border: 1px solid #0984e3; background: white; color: #0984e3; border-radius: 4px; cursor: pointer;">-</button>
+                        <span style="font-weight: bold; min-width: 20px; text-align: center;">${item.qty}</span>
+                        <button onclick="changeQty(${i}, 1)" style="width: 28px; height: 28px; border: none; background: #0984e3; color: white; border-radius: 4px; cursor: pointer;">+</button>
+                        <button onclick="deleteItem(${i})" style="color: #e17055; border: none; background: none; cursor: pointer; font-size: 18px; margin-left: 5px;">🗑️</button>
                     </div>
                 </div>`;
         });
@@ -82,7 +80,7 @@ document.addEventListener("DOMContentLoaded", function () {
         cartCount.innerText = count;
         totalPrice.innerText = total.toLocaleString();
         localStorage.setItem("cart", JSON.stringify(cart));
-    }
+    };
 
     window.changeQty = (index, val) => {
         if (cart[index].qty + val > 0) cart[index].qty += val;
@@ -97,13 +95,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
-    // 4. MODALLARNI YOPISH (Xatolar to'g'rilandi)
+    // 4. MODALLARNI BOSHQARISH
     cartBtn.onclick = () => document.getElementById("cartModal").classList.add("show");
-
-    // Yopish tugmalari uchun IDlar
     document.getElementById("closeCart").onclick = () => document.getElementById("cartModal").classList.remove("show");
     document.getElementById("closeTableModal").onclick = () => document.getElementById("tableModal").style.display = "none";
-
     document.querySelector(".btn-joy").onclick = () => document.getElementById("tableModal").style.display = "flex";
 
     window.selectTable = (num) => {
@@ -113,17 +108,31 @@ document.addEventListener("DOMContentLoaded", function () {
         document.querySelector(".btn-menu").click();
     };
 
-    // 5. BUYURTMA VA QIDIRUV
+    // 5. BUYURTMA BERISH
     document.getElementById("saveBtn").onclick = () => {
         if (cart.length === 0) return alert("Savat bo'sh!");
-        document.getElementById("orderModal").style.display = "flex";
+
+        if (selectedTable) {
+            let confirmDineIn = confirm(`${selectedTable}-stol uchun buyurtma berilsinmi?`);
+            if (confirmDineIn) {
+                alert("Buyurtma qabul qilindi! Taomlar tez orada keltiriladi.");
+                cart = [];
+                updateCart();
+                location.reload();
+            }
+        } else {
+            document.getElementById("orderModal").style.display = "flex";
+        }
     };
 
     document.getElementById("confirmOrder").onclick = () => {
         const phone = document.getElementById("userPhone").value;
+        const name = document.getElementById("userName").value;
+
+        if (name === "") return alert("Ismingizni kiriting!");
         if (phone.length < 13) return alert("Telefon raqami noto'g'ri!");
 
-        alert("Buyurtma qabul qilindi! Stol: " + (selectedTable || "Dastavka"));
+        alert("Buyurtma qabul qilindi! Tez orada operatorimiz bog'lanadi.");
         cart = [];
         updateCart();
         location.reload();
@@ -133,7 +142,7 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("orderModal").style.display = "none";
     };
 
-    // Qidiruv
+    // Qidiruv mantiqi
     document.getElementById("searchInput").oninput = function () {
         let val = this.value.toLowerCase();
         let cards = document.querySelectorAll(".card");
